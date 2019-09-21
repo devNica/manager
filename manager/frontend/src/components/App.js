@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom'
+import Header from './layout/Header'
+import Dashboard from './leads/Dashboard'
 
 class App extends Component {
     render() {
         return (
             <div>
-                <h1>Welcome React</h1>
+                <Header />
+                <div className="container">
+                    <Dashboard />
+                </div>
+
             </div>
         );
     }
