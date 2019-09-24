@@ -2,17 +2,20 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux'
 import { addLead } from '../../actions/leads'
 import PropTypes from 'prop-types'
+
 class Form extends Component {
 
     static propTypes = {
         addLead: PropTypes.func.isRequired,
+        message: PropTypes.object.isRequired,
+        errors: PropTypes.object.isRequired,
     }
 
     initialState = {
         name: '',
         email: '',
         message: '',
-        error: false
+
     }
 
     state = {
@@ -26,25 +29,19 @@ class Form extends Component {
         })
     }
 
+    componentDidUpdate(prevProps) {
+        const { status } = this.props.errors;
+        if (status !== prevProps.errors.status) {
+            if (!status) {
+                this.setState({ ...this.initialState })
+            }
+        }
+    }
+
+
     handleSubmit = e => {
         e.preventDefault()
-
-        const { name, email, message } = this.state
-
-        if (name === '' || email === '' || message === '') {
-            this.setState({ error: true })
-
-        }
-        else {
-            this.setState({ error: false })
-
-            this.props.addLead(this.state)
-
-            this.setState({
-                ...this.initialState
-            })
-
-        }
+        this.props.addLead(this.state)
 
 
 
@@ -52,11 +49,8 @@ class Form extends Component {
 
     render() {
 
-        const { name, email, message, error } = this.state
-
-        const alert = <div className='alert alert-danger' role='alert'>
-            Todos los campos son obligatorios
-        </div>
+        const { name, email, message } = this.state
+        const { msg } = this.props.errors
 
         return (
             <Fragment>
@@ -68,9 +62,12 @@ class Form extends Component {
 
                     <div className="card-body">
 
-                        {error ? alert : null}
+
                         <div className="col-md-6 offset-3">
                             <form onSubmit={this.handleSubmit}>
+
+
+
                                 <div className="form-group">
                                     <label htmlFor="id_name">Name</label>
                                     <input
@@ -83,6 +80,11 @@ class Form extends Component {
                                         onChange={this.handleChange}
                                     />
                                 </div>
+
+                                {msg.name ? <div className='alert alert-danger' role='alert'>
+                                    {msg.name}
+                                </div> : null}
+
                                 <div className="form-group">
                                     <label htmlFor="id_email">Email</label>
                                     <input
@@ -94,6 +96,11 @@ class Form extends Component {
                                         value={email}
                                         onChange={this.handleChange} />
                                 </div>
+
+                                {msg.email ? <div className='alert alert-danger' role='alert'>
+                                    {msg.email}
+                                </div> : null}
+
                                 <div className="form-group">
                                     <label htmlFor="id_email">Message</label>
                                     <textarea
@@ -121,4 +128,9 @@ class Form extends Component {
     }
 }
 
-export default connect(null, { addLead })(Form);
+const mapStateToProps = state => ({
+    errors: state.errors,
+    message: state.messages,
+})
+
+export default connect(mapStateToProps, { addLead })(Form);
