@@ -8,10 +8,15 @@ class Form extends Component {
         addLead: PropTypes.func.isRequired,
     }
 
-    state = {
+    initialState = {
         name: '',
         email: '',
         message: '',
+        error: false
+    }
+
+    state = {
+        ...this.initialState
     }
 
     handleChange = e => {
@@ -23,21 +28,47 @@ class Form extends Component {
 
     handleSubmit = e => {
         e.preventDefault()
-        console.log(this.state)
-        this.props.addLead(this.state)
+
+        const { name, email, message } = this.state
+
+        if (name === '' || email === '' || message === '') {
+            this.setState({ error: true })
+
+        }
+        else {
+            this.setState({ error: false })
+
+            this.props.addLead(this.state)
+
+            this.setState({
+                ...this.initialState
+            })
+
+        }
+
+
+
     }
 
     render() {
 
-        const { name, email, message } = this.state
+        const { name, email, message, error } = this.state
+
+        const alert = <div className='alert alert-danger' role='alert'>
+            Todos los campos son obligatorios
+        </div>
 
         return (
             <Fragment>
                 <div className="card mt-5">
                     <div className="card-header">
                         Add Lead Form
-                </div>
+
+                    </div>
+
                     <div className="card-body">
+
+                        {error ? alert : null}
                         <div className="col-md-6 offset-3">
                             <form onSubmit={this.handleSubmit}>
                                 <div className="form-group">
