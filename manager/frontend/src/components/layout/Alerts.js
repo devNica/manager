@@ -22,6 +22,12 @@ class Alerts extends Component {
             if (error.msg.email) {
                 alert.error(error.msg.email)
             }
+            if (error.msg.non_field_errors) {
+                alert.error(error.msg.non_field_errors.join())
+            }
+            if (error.msg.username) {
+                alert.error(error.msg.username)
+            }
 
 
         }
@@ -32,6 +38,10 @@ class Alerts extends Component {
             if (message.addLead) {
                 alert.info(message.addLead)
             }
+            if (message.passwordNotMatch) {
+                alert.error(message.passwordNotMatch)
+            }
+
         }
     }
 

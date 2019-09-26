@@ -41,11 +41,11 @@ class Header extends Component {
                     </button>
                     <div className="collapse navbar-collapse" id="navbarResponsive">
                         <ul className="navbar-nav ml-auto">
-                            <li className="nav-item active">
-                                <a className="nav-link" href="#">Home
-                <span className="sr-only">(current)</span>
-                                </a>
-                            </li>
+                            <span className='navbar-text mr-3'>
+                                <div className='h5'>
+                                    {user ? `Welcome ${user.username}` : ``}
+                                </div>
+                            </span>
 
                             {authLinks}
 

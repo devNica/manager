@@ -8,7 +8,11 @@ import {
     LOGIN_SUCCESS,
     LOGIN_FAIL,
     LOGOUT_SUCCESS,
+    REGISTER_FAIL,
+    REGISTER_SUCCESS,
 } from './types'
+
+
 
 //CHECH TOKEN & LOAD USER
 export const loadUser = () => (dispatch, getState) => {
@@ -17,24 +21,8 @@ export const loadUser = () => (dispatch, getState) => {
         type: USER_LOADING
     });
 
-    //get toke from state
-    const token = getState().auth.token;
 
-    //headers
-    const config = {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-
-    }
-
-    //if token, add to headers config
-    if (token) {
-        config.headers['Authorization'] = `Token ${token}`;
-    }
-
-
-    axios.get('/api/auth/user', config)
+    axios.get('/api/auth/user', tokenConfig(getState))
         .then(res => {
             dispatch({
                 type: USER_LOADED,
@@ -85,24 +73,7 @@ export const login = (username, password) => (dispatch) => {
 export const logout = () => (dispatch, getState) => {
 
 
-    //get toke from state
-    const token = getState().auth.token;
-
-    //headers
-    const config = {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-
-    }
-
-    //if token, add to headers config
-    if (token) {
-        config.headers['Authorization'] = `Token ${token}`;
-    }
-
-
-    axios.post('/api/auth/logout/', null, config)
+    axios.post('/api/auth/logout/', null, tokenConfig(getState))
         .then(res => {
             dispatch({
                 type: LOGOUT_SUCCESS,
@@ -114,4 +85,57 @@ export const logout = () => (dispatch, getState) => {
         });
 
 
+}
+
+
+//REGISTER USER
+export const register = ({ username, email, password }) => (dispatch) => {
+
+
+    //headers
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+
+    }
+
+    //request body
+    const body = JSON.stringify({ username, email, password })
+
+
+    axios.post('/api/auth/register', body, config)
+        .then(res => {
+            dispatch({
+                type: REGISTER_SUCCESS,
+                payload: res.data
+            })
+        })
+        .catch(err => {
+            dispatch(returnErrors(err.response.data, err.response.status));
+            dispatch({ type: REGISTER_FAIL })
+        });
+
+
+}
+
+
+//setup config and token - helper function
+export const tokenConfig = getState => {
+    //get toke from state
+    const token = getState().auth.token;
+
+    //headers
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+
+    //if token, add to headers config
+    if (token) {
+        config.headers['Authorization'] = `Token ${token}`;
+    }
+
+    return config;
 }
