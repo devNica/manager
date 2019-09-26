@@ -16,6 +16,7 @@ import Alerts from './layout/Alerts'
 import Login from '../accounts/Login'
 import Register from '../accounts/Register'
 import PrivateRoute from './common/PrivateRoute'
+import { loadUser } from '../actions/auth'
 
 // optional cofiguration
 const options = {
@@ -24,6 +25,11 @@ const options = {
 }
 
 class App extends Component {
+
+    componentDidMount() {
+        store.dispatch(loadUser())
+    }
+
     render() {
         return (
             <Provider store={store}>
